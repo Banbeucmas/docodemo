@@ -1,7 +1,9 @@
 import React, {useState} from 'react';
 import {ThemeProvider, SearchBar} from 'react-native-elements';
 import MapboxGL from '@react-native-mapbox-gl/maps';
+import DirectionFactory from '@mapbox/mapbox-sdk/services/directions';
 import {View, Keyboard} from 'react-native';
+import {lineString} from '@turf/helpers';
 import styles from './Styles';
 
 const MAPBOXGL_TOKEN =
@@ -10,12 +12,17 @@ const MAPBOXGL_URL = 'https://api.mapbox.com/geocoding/v5/mapbox.places/';
 
 const REC_URL = 'https://api.opentripmap.com/0.1/en/places/bbox?';
 const REC_TOKEN = '5ae2e3f221c38a28845f05b6b58e5d7ef9d9b94cc6d9cd13713e8d01';
+const directionClient = DirectionFactory({accessToken: 'pk.eyJ1IjoidHhhMzEwIiwiYSI6ImNrdHR4aHVucjA1NGIyb3A4amU0cXppMXAifQ.Q_z-xTiDEIbD-DlzL0Wy6A'});
+
+
+const points = []
 
 const HomeScreen = () => {
   const [text, setText] = useState();
   const [jsonRes, setSearchRes] = useState();
   const [coordinates, setCoordinates] = useState({kd: 138, vd: 41});
   const [recJson, setRecJson] = useState();
+  const [route, setRoute] = useState();
 
   const handleFunc = () => {
     Keyboard.dismiss();
@@ -31,7 +38,16 @@ const HomeScreen = () => {
       kd: json.features[0].geometry.coordinates[0],
       vd: json.features[0].geometry.coordinates[1],
     });
-    console.log(json);
+
+    points.push({coordinates: [
+      json.features[0].geometry.coordinates[0],
+      json.features[0].geometry.coordinates[1]
+    ]});
+
+    if(points.length >= 2){
+      getDirections(points);
+    }
+
     //get recommended points
     let lon_min = 0;
     let lon_max = 0;
@@ -67,11 +83,27 @@ const HomeScreen = () => {
       number_of_places +
       '&apikey=' +
       REC_TOKEN;
-    console.log(TEST_URL);
     let rec_response = await fetch(TEST_URL);
     let rec_json = await rec_response.json();
-    console.log(rec_json);
     setRecJson(rec_json);
+  }
+
+  const getDirections = async (arr) => {
+    const reqOptions = {
+      waypoints: [
+
+      ],
+      profile: 'driving',
+      geometries: 'geojson',
+    };
+
+    reqOptions.waypoints = arr;
+
+    const res = await directionClient.getDirections(reqOptions).send()
+    //const route = makeLineString(res.body.routes[0].geometry.coordinates)
+    const r = lineString(res.body.routes[0].geometry.coordinates);
+    console.log("Route: ", JSON.stringify(r));
+    setRoute(r);
   }
 
   return (
@@ -111,6 +143,12 @@ const HomeScreen = () => {
                 );
               })
             : null}
+
+            {route ? (
+              <MapboxGL.ShapeSource id="routeSource" shape={route.geometry}>
+                <MapboxGL.LineLayer id="routeFill" style={{lineColor: "#ff8109", lineWidth: 3.2, lineCap: MapboxGL.LineJoin.Round, lineOpacity: 1.84}} />
+              </MapboxGL.ShapeSource>
+            ) : null}
         </MapboxGL.MapView>
       </View>
     </View>

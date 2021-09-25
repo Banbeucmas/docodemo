@@ -16,11 +16,11 @@ export default StyleSheet.create({
   },
 
   recommendationMarker: {
-    height: 30, 
-    width: 30, 
-    backgroundColor: '#00cccc', 
-    borderRadius: 50, 
-    borderColor: '#fff', 
+    height: 30,
+    width: 30,
+    backgroundColor: '#00cccc',
+    borderRadius: 50,
+    borderColor: '#fff',
     borderWidth: 3,
-  }
+  },
 });

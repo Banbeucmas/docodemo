@@ -14,4 +14,13 @@ export default StyleSheet.create({
     backgroundColor: 'blue',
     width: '100%',
   },
+
+  recommendationMarker: {
+    height: 30, 
+    width: 30, 
+    backgroundColor: '#00cccc', 
+    borderRadius: 50, 
+    borderColor: '#fff', 
+    borderWidth: 3,
+  }
 });

@@ -13,7 +13,10 @@ const REC_TOKEN = '5ae2e3f221c38a28845f05b6b58e5d7ef9d9b94cc6d9cd13713e8d01';
 
 const HomeScreen = () => {
   const [text, setText] = useState();
+  const [jsonRes, setSearchRes] = useState();
   const [coordinates, setCoordinates] = useState({kd: 138, vd: 41});
+  const [recJson, setRecJson] = useState();
+
   const handleFunc = () => {
     Keyboard.dismiss();
     getSearchResult();
@@ -21,34 +24,83 @@ const HomeScreen = () => {
   };
 
   const getSearchResult = async () => {
-    console.log(MAPBOXGL_URL + encodeURI(text) + MAPBOXGL_TOKEN);
     let response = await fetch(MAPBOXGL_URL + encodeURI(text) + MAPBOXGL_TOKEN);
     let json = await response.json();
+    //location
     setCoordinates({
       kd: json.features[0].geometry.coordinates[0],
       vd: json.features[0].geometry.coordinates[1],
     });
-    // console.log(json);
-
+    console.log(json);
+    //get recommended points
+    let lon_min = 0;
+    let lon_max = 0;
+    let lat_min = 0;
+    let lat_max = 0;
+    let r = 0.01;
+    let number_of_places = 20;
+    if (json.features[0].bbox == null) {
+      lon_min = json.features[0].center[0] - r;
+      lat_min = json.features[0].center[1] - r;
+      lon_max = json.features[0].center[0] + r;
+      lat_max = json.features[0].center[1] + r;
+    } else {
+      lon_min = json.features[0].bbox[0];
+      lat_min = json.features[0].bbox[1];
+      lon_max = json.features[0].bbox[2];
+      lat_max = json.features[0].bbox[3];
+    }
     let TEST_URL =
       REC_URL +
       'lon_min=' +
-      json.features[0].bbox[0] +
+      lon_min +
       '&' +
       'lon_max=' +
-      json.features[0].bbox[2] +
+      lon_max +
       '&' +
       'lat_min=' +
-      json.features[0].bbox[1] +
+      lat_min +
       '&' +
       'lat_max=' +
-      json.features[0].bbox[3] +
+      lat_max +
+      '&limit=' +
+      number_of_places +
       '&apikey=' +
       REC_TOKEN;
     console.log(TEST_URL);
-    let testresponse = await fetch(TEST_URL);
-    let testjson = await testresponse.json();
-    // console.log(testjson);
+    let rec_response = await fetch(TEST_URL);
+    let rec_json = await rec_response.json();
+    console.log(rec_json);
+    setRecJson(rec_json);
+  };
+
+  const renderAnnotations = () => {
+    if (recJson == null) {
+      return null;
+    } else {
+      recJson.features.map((item, index) => {
+        return (
+          <MapboxGL.PointAnnotation
+            key={index + ''}
+            id={index + ''}
+            coordinate={[
+              item.geometry.coordinates[0],
+              item.geometry.coordinates[1],
+            ]}>
+            <View
+              style={{
+                height: 30,
+                width: 30,
+                backgroundColor: '#00cccc',
+                borderRadius: 50,
+                borderColor: '#fff',
+                borderWidth: 3,
+              }}
+            />
+          </MapboxGL.PointAnnotation>
+        );
+      });
+    }
   };
 
   return (
@@ -68,10 +120,26 @@ const HomeScreen = () => {
             centerCoordinate={[coordinates.kd, coordinates.vd]}
           />
           <MapboxGL.PointAnnotation
-            key="pointAnnotation"
-            id="pointAnnotation"
+            key="searchPoint"
+            id="seatchPoint"
             coordinate={[coordinates.kd, coordinates.vd]}
           />
+
+          {recJson
+            ? recJson.features.map((item, index) => {
+                return (
+                  <MapboxGL.PointAnnotation
+                    key={index + ''}
+                    id={index + ''}
+                    coordinate={[
+                      item.geometry.coordinates[0],
+                      item.geometry.coordinates[1],
+                    ]}>
+                    <View style={styles.recommendationMarker} />
+                  </MapboxGL.PointAnnotation>
+                );
+              })
+            : null}
         </MapboxGL.MapView>
       </View>
     </View>

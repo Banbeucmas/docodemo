@@ -87,16 +87,7 @@ const HomeScreen = () => {
               item.geometry.coordinates[0],
               item.geometry.coordinates[1],
             ]}>
-            <View
-              style={{
-                height: 30,
-                width: 30,
-                backgroundColor: '#00cccc',
-                borderRadius: 50,
-                borderColor: '#fff',
-                borderWidth: 3,
-              }}
-            />
+            <View style={styles.recommendationMarker} />
           </MapboxGL.PointAnnotation>
         );
       });

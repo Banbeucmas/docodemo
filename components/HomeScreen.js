@@ -72,27 +72,7 @@ const HomeScreen = () => {
     let rec_json = await rec_response.json();
     console.log(rec_json);
     setRecJson(rec_json);
-  };
-
-  const renderAnnotations = () => {
-    if (recJson == null) {
-      return null;
-    } else {
-      recJson.features.map((item, index) => {
-        return (
-          <MapboxGL.PointAnnotation
-            key={index + ''}
-            id={index + ''}
-            coordinate={[
-              item.geometry.coordinates[0],
-              item.geometry.coordinates[1],
-            ]}>
-            <View style={styles.recommendationMarker} />
-          </MapboxGL.PointAnnotation>
-        );
-      });
-    }
-  };
+  }
 
   return (
     <View style={{flex: 1}}>

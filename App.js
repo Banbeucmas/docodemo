@@ -43,7 +43,7 @@ function App() {
     );
     let json = await response.json();
     setCoordinates({'kd':json.features[0].geometry.coordinates[0],'vd':json.features[0].geometry.coordinates[1]});
-    
+    // console.log(json);
 
     let TEST_URL = REC_URL + "lon_min=" +json.features[0].bbox[0]+"&"+ "lon_max=" +json.features[0].bbox[2]+ "&" + "lat_min="+ json.features[0].bbox[1]+ "&" + "lat_max=" + json.features[0].bbox[3]+"&apikey=" + REC_TOKEN;
     console.log(TEST_URL);
@@ -51,7 +51,7 @@ function App() {
       TEST_URL
     );
     let testjson = await testresponse.json();
-    console.log(testjson.type);
+    // console.log(testjson);
   }
 
 

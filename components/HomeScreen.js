@@ -5,6 +5,7 @@ import DirectionFactory from '@mapbox/mapbox-sdk/services/directions';
 import {View, Keyboard} from 'react-native';
 import {lineString} from '@turf/helpers';
 import styles from './Styles';
+import {makeRadius} from '../utils/TurfUtils'
 
 const MAPBOXGL_TOKEN =
   '.json?access_token=pk.eyJ1IjoidHhhMzEwIiwiYSI6ImNrdHR4aHVucjA1NGIyb3A4amU0cXppMXAifQ.Q_z-xTiDEIbD-DlzL0Wy6A';
@@ -106,6 +107,8 @@ const HomeScreen = () => {
     setRoute(r);
   }
 
+  var pointRaius = makeRadius(points, 500000);
+
   return (
     <View style={{flex: 1}}>
       <SearchBar
@@ -149,6 +152,14 @@ const HomeScreen = () => {
                 <MapboxGL.LineLayer id="routeFill" style={{lineColor: "#ff8109", lineWidth: 3.2, lineCap: MapboxGL.LineJoin.Round, lineOpacity: 1.84}} />
               </MapboxGL.ShapeSource>
             ) : null}
+
+
+            <MapboxGL.ShapeSource>
+              <MapboxGL.CircleLayer>
+
+              </MapboxGL.CircleLayer>
+            </MapboxGL.ShapeSource>
+
         </MapboxGL.MapView>
       </View>
     </View>

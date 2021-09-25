@@ -17,25 +17,6 @@ MapboxGL.setAccessToken(
   'pk.eyJ1IjoieXV0YWRpbmgiLCJhIjoiY2t0c25pcnlvMHp3MTJubXg0cWI3eXhzMiJ9.rb0f5Gz3jef0VIwieUFAYQ',
 );
 
-function PlannerScreen({navigation}) {
-  return (
-    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
-      <Text>Details!</Text>
-    </View>
-  );
-}
-
-/*
-      <SearchBar
-          placeholder="Type your location"
-          onChangeText={updateSearch}
-          value={search}
-        />
-
-        <View style={styles.container}>
-          <MapboxGL.MapView style={styles.map} />
-        </View>
-        */
 
 const Tab = createBottomTabNavigator();
 
@@ -52,8 +33,25 @@ export default function App() {
             }}
           />
           <Tab.Screen name="Planner" component={PlannerScreen} />
+          <Tab.Screen name="Recommendation" component={RecommendationScreen} />
         </Tab.Navigator>
       </NavigationContainer>
     </SafeAreaView>
+  );
+}
+
+function PlannerScreen({navigation}) {
+  return (
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <Text>Details!</Text>
+    </View>
+  );
+}
+
+function RecommendationScreen({navigation}) {
+  return (
+    <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+      <Text>Recommednation!</Text>
+    </View>
   );
 }

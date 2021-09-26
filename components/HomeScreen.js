@@ -16,7 +16,7 @@ const REC_TOKEN = '5ae2e3f221c38a28845f05b6b58e5d7ef9d9b94cc6d9cd13713e8d01';
 const directionClient = DirectionFactory({accessToken: 'pk.eyJ1IjoidHhhMzEwIiwiYSI6ImNrdHR4aHVucjA1NGIyb3A4amU0cXppMXAifQ.Q_z-xTiDEIbD-DlzL0Wy6A'});
 
 
-const points = [] //collection of all places user search
+const points = [] //collection of all places user searching
 
 const HomeScreen = () => {
   const [text, setText] = useState();

@@ -5,6 +5,7 @@ import DirectionFactory from '@mapbox/mapbox-sdk/services/directions';
 import {View, Keyboard} from 'react-native';
 import {lineString} from '@turf/helpers';
 import styles from './Styles';
+import { plannerList } from './Planner';
 
 const MAPBOXGL_TOKEN =
   '.json?access_token=pk.eyJ1IjoidHhhMzEwIiwiYSI6ImNrdHR4aHVucjA1NGIyb3A4amU0cXppMXAifQ.Q_z-xTiDEIbD-DlzL0Wy6A';
@@ -15,7 +16,7 @@ const REC_TOKEN = '5ae2e3f221c38a28845f05b6b58e5d7ef9d9b94cc6d9cd13713e8d01';
 const directionClient = DirectionFactory({accessToken: 'pk.eyJ1IjoidHhhMzEwIiwiYSI6ImNrdHR4aHVucjA1NGIyb3A4amU0cXppMXAifQ.Q_z-xTiDEIbD-DlzL0Wy6A'});
 
 
-const points = []
+const points = [] //collection of all places user searching
 
 const HomeScreen = () => {
   const [text, setText] = useState();
@@ -39,10 +40,13 @@ const HomeScreen = () => {
       vd: json.features[0].geometry.coordinates[1],
     });
 
-    points.push({coordinates: [
-      json.features[0].geometry.coordinates[0],
-      json.features[0].geometry.coordinates[1]
-    ]});
+    if (json.features[0].bbox == null) {
+      points.push({coordinates: [
+        json.features[0].geometry.coordinates[0],
+        json.features[0].geometry.coordinates[1]
+      ]});
+      plannerList.push(json.features[0]);
+    }
 
     if(points.length >= 2){
       getDirections(points);
@@ -85,6 +89,12 @@ const HomeScreen = () => {
       REC_TOKEN;
     let rec_response = await fetch(TEST_URL);
     let rec_json = await rec_response.json();
+
+    console.log(
+      rec_json
+    );
+
+
     setRecJson(rec_json);
   }
 
@@ -132,6 +142,7 @@ const HomeScreen = () => {
 
           {recJson
             ? recJson.features.map((item, index) => {
+
                 return (
                   <MapboxGL.PointAnnotation
                     key={index + ''}
